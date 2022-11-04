@@ -104,7 +104,7 @@ tasks.generateDevelopmentBundle {
         listOf(
             "https://repo.maven.apache.org/maven2/",
             paperMavenPublicUrl,
-            "https://maven.atlanti.se/repository/maven-public/",
+            "http://game.alpha-infinity.fr:8081/repository/maven-public/",
         )
     )
 }
@@ -116,8 +116,9 @@ allprojects {
         repositories {
             maven {
                 name = "papyrus"
-                url = uri("https://maven.atlanti.se/repository/maven-papyrus/")
+                url = uri("http://game.alpha-infinity.fr:8081/repository/maven-papyrus/")
                 credentials(PasswordCredentials::class)
+                isAllowInsecureProtocol = true
             }
         }
     }
