@@ -1,0 +1,109 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Sat, 5 Nov 2022 01:27:11 +0100
+Subject: [PATCH] Implementation de Player::canAlwaysOpenCommandBlocks
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
+index 0a5f8d990cce5df339fd9b2b0fcb291a20ddad41..47451e9627738ca20013a7c717f5fa14d307176a 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -400,7 +400,7 @@ public class ServerPlayerGameMode {
+             BlockEntity tileentity = this.level.getBlockEntity(pos);
+             Block block = iblockdata.getBlock();
+ 
+-            if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks() && !(block instanceof net.minecraft.world.level.block.CommandBlock && (this.player.isCreative() && this.player.getBukkitEntity().hasPermission("minecraft.commandblock")))) { // Paper - command block permission
++            if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks() && !(block instanceof net.minecraft.world.level.block.CommandBlock && (this.player.getBukkitEntity().canAlwaysOpenCommandBlocks() || (this.player.isCreative() && this.player.getBukkitEntity().hasPermission("minecraft.commandblock"))))) { // Paper - command block permission
+                 this.level.sendBlockUpdated(pos, iblockdata, iblockdata, 3);
+                 return false;
+             } else if (this.player.blockActionRestricted(this.level, pos, this.gameModeForPlayer)) {
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index 3be9352ae9b0b84acf07064b45562ceffd30391b..25851670fb3186a5319e409765e0a2986bc5f5dc 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -1022,6 +1022,10 @@ public abstract class PlayerList {
+         GameProfile gameprofile = player.getGameProfile();
+         int i = this.server.getProfilePermissions(gameprofile);
+ 
++        if (player.getBukkitEntity().canAlwaysOpenCommandBlocks() && i < 2) {
++            i = 2;
++        }
++
+         this.sendPlayerPermissionLevel(player, i);
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/item/GameMasterBlockItem.java b/src/main/java/net/minecraft/world/item/GameMasterBlockItem.java
+index 8cfce2d85041849ef3943e56c204fefeb07f96ec..4a9ef097bf52d2f03ee97dc62c88460dd3897875 100644
+--- a/src/main/java/net/minecraft/world/item/GameMasterBlockItem.java
++++ b/src/main/java/net/minecraft/world/item/GameMasterBlockItem.java
+@@ -15,6 +15,10 @@ public class GameMasterBlockItem extends BlockItem {
+     @Override
+     protected BlockState getPlacementState(BlockPlaceContext context) {
+         Player player = context.getPlayer();
+-        return player != null && !player.canUseGameMasterBlocks() ? null : super.getPlacementState(context);
++        return player != null && !(
++            player.canUseGameMasterBlocks() ||
++            ((org.bukkit.craftbukkit.entity.CraftPlayer) player.getBukkitEntity()).canAlwaysOpenCommandBlocks()
++        ) ? null : super.getPlacementState(context);
++
+     }
+ }
+diff --git a/src/main/java/net/minecraft/world/level/block/CommandBlock.java b/src/main/java/net/minecraft/world/level/block/CommandBlock.java
+index 2e7c03b00bc941b86df6a7f1b2b188c9f0aede22..ace12dac20035213cf0aded82e0ddaa33c7daa98 100644
+--- a/src/main/java/net/minecraft/world/level/block/CommandBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/CommandBlock.java
+@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
+ import net.minecraft.world.phys.BlockHitResult;
+ import org.slf4j.Logger;
+ 
++import org.bukkit.craftbukkit.entity.CraftPlayer;
+ import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
+ 
+ public class CommandBlock extends BaseEntityBlock implements GameMasterBlock {
+@@ -130,7 +131,11 @@ public class CommandBlock extends BaseEntityBlock implements GameMasterBlock {
+     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+         BlockEntity tileentity = world.getBlockEntity(pos);
+ 
+-        if (tileentity instanceof CommandBlockEntity && (player.canUseGameMasterBlocks() || (player.isCreative() && player.getBukkitEntity().hasPermission("minecraft.commandblock")))) { // Paper - command block permission
++        if (tileentity instanceof CommandBlockEntity && (
++            player.canUseGameMasterBlocks()
++            || ((CraftPlayer) player.getBukkitEntity()).canAlwaysOpenCommandBlocks()
++            || (player.isCreative() && player.getBukkitEntity().hasPermission("minecraft.commandblock"))
++        )) {
+             player.openCommandBlock((CommandBlockEntity) tileentity);
+             return InteractionResult.sidedSuccess(world.isClientSide);
+         } else {
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index e8e703b4afb6fe5e0173c54ad13fbc98fffbdcdf..2b39740654add04315f2940f0fe1f7edd246d5b9 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -177,6 +177,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     private static final boolean DISABLE_CHANNEL_LIMIT = System.getProperty("paper.disableChannelLimit") != null; // Paper - add a flag to disable the channel limit
+     private long lastSaveTime;
+     // Paper end
++    private boolean canAlwaysOpenCommandBlocks = false; // Papyrus
+ 
+     public CraftPlayer(CraftServer server, ServerPlayer entity) {
+         super(server, entity);
+@@ -2893,6 +2894,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         }
+     }
+     // Paper end
++
++    // Papyrus start
++    @Override
++    public boolean canAlwaysOpenCommandBlocks() {
++        return canAlwaysOpenCommandBlocks;
++    }
++
++    @Override
++    public void setCanAlwaysOpenCommandBlocks(boolean canAlwaysOpenCommandBlocks) {
++        this.canAlwaysOpenCommandBlocks = canAlwaysOpenCommandBlocks;
++
++        net.minecraft.server.MinecraftServer.getServer().getPlayerList().sendPlayerPermissionLevel(getHandle());
++    }
++    // Papyrus end
++
+     // Spigot start
+     private final Player.Spigot spigot = new Player.Spigot()
+     {

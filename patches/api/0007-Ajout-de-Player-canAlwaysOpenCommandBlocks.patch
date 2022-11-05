@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Sat, 5 Nov 2022 01:27:49 +0100
+Subject: [PATCH] Ajout de Player::canAlwaysOpenCommandBlocks
+
+
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index c9b9453638951bb69bc0fa2becd1dd36e9a315b5..d81323e1bfb02142c0fb62cfb701d95e9483dea0 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -2636,6 +2636,22 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+      */
+     void sendOpLevel(byte level);
+ 
++    // Papyrus start
++    /**
++     * Gets whether this player can always open command blocks and see their content
++     * @return whether this player can always open command blocks
++     */
++    boolean canAlwaysOpenCommandBlocks();
++
++    /**
++     * Sets whether this player can always open command blocks and see their content.
++     * This setting has some minor client side-effects, such as some F3 commands, but will not change
++     * anything server-side unrelated to command blocks opening.
++     * @param canAlwaysOpenCommandBlocks whether this player can always open command blocks
++     */
++    void setCanAlwaysOpenCommandBlocks(boolean canAlwaysOpenCommandBlocks);
++    // Papyrus end
++
+     /**
+      * Adds custom chat completion suggestions that the client will
+      * suggest when typing in chat.
