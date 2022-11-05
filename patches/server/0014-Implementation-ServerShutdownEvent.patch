@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Sat, 5 Nov 2022 15:01:44 +0100
+Subject: [PATCH] Implementation ServerShutdownEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 0149d84ddb09283ea807825afb217f4998c8b8ab..70353e5ad3be5cd0cf26f9ad8b272b2981c3fbcf 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1019,6 +1019,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         this.safeShutdown(flag, false);
+     }
+     public void safeShutdown(boolean flag, boolean isRestarting) {
++        org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.server.ServerShutdownEvent()); // Papyrus
++
+         this.isRestarting = isRestarting;
+         this.hasLoggedStop = true; // Paper
+         if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper
