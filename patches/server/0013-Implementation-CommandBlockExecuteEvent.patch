@@ -1,0 +1,47 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Sat, 5 Nov 2022 14:53:06 +0100
+Subject: [PATCH] Implementation CommandBlockExecuteEvent
+
+
+diff --git a/src/main/java/net/minecraft/world/level/BaseCommandBlock.java b/src/main/java/net/minecraft/world/level/BaseCommandBlock.java
+index 888936385196a178ab8b730fd5e4fff4a5466428..f13c37b253209ac5273597b5f7bbd052e766afc8 100644
+--- a/src/main/java/net/minecraft/world/level/BaseCommandBlock.java
++++ b/src/main/java/net/minecraft/world/level/BaseCommandBlock.java
+@@ -123,14 +123,28 @@ public abstract class BaseCommandBlock implements CommandSource {
+                 if (minecraftserver.isCommandBlockEnabled() && !StringUtil.isNullOrEmpty(this.command)) {
+                     try {
+                         this.lastOutput = null;
+-                        CommandSourceStack commandlistenerwrapper = this.createCommandSourceStack().withCallback((commandcontext, flag, i) -> {
+-                            if (flag) {
+-                                ++this.successCount;
+-                            }
+-
+-                        });
+-
+-                        minecraftserver.getCommands().dispatchServerCommand(commandlistenerwrapper, this.command); // CraftBukkit
++                        var source = this.createCommandSourceStack();
++                        var entity = source.getEntity();
++
++                        var event = new org.bukkit.event.block.CommandBlockExecuteEvent(
++                            this.getBukkitSender(source),
++                            entity == null ? org.bukkit.craftbukkit.block.CraftBlock.at(source.getLevel(), new net.minecraft.core.BlockPos(source.getPosition())) : null,
++                            entity == null ? null : org.bukkit.craftbukkit.entity.CraftEntity.getEntity(minecraftserver.server, entity),
++                            this.command
++                        );
++
++                        org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
++
++                        if (!event.isCancelled()) {
++                            this.lastOutput = null;
++                            CommandSourceStack commandlistenerwrapper = source.withCallback((commandcontext, flag, i) -> {
++                                if (flag) {
++                                    ++this.successCount;
++                                }
++                            });
++
++                            minecraftserver.getCommands().dispatchServerCommand(commandlistenerwrapper, event.getCommand()); // CraftBukkit // Papyrus - use command from event
++                        }
+                     } catch (Throwable throwable) {
+                         CrashReport crashreport = CrashReport.forThrowable(throwable, "Executing command block");
+                         CrashReportCategory crashreportsystemdetails = crashreport.addCategory("Command to be executed");
