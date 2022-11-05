@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Sat, 5 Nov 2022 14:18:59 +0100
+Subject: [PATCH] =?UTF-8?q?Compatibilit=C3=A9=20avec=20anciens=20s=C3=A9le?=
+ =?UTF-8?q?cteurs=20CB?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+
+diff --git a/src/main/java/org/bukkit/command/SimpleCommandMap.java b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+index b8623575b1c1b565560c2dd6438190716845a652..e24bbe14f4c92ce56374e30a6b3d866518125ef1 100644
+--- a/src/main/java/org/bukkit/command/SimpleCommandMap.java
++++ b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+@@ -152,7 +152,11 @@ public class SimpleCommandMap implements CommandMap {
+         try {
+             try (co.aikar.timings.Timing ignored = target.timings.startTiming()) { // Paper - use try with resources
+             // Note: we don't return the result of target.execute as thats success / failure, we return handled (true) or not handled (false)
+-            target.execute(sender, sentCommandLabel, Arrays.copyOfRange(args, 1, args.length));
++                if (sender instanceof BlockCommandSender) {
++                    parseSelectors(target, (BlockCommandSender) sender, sentCommandLabel, Arrays.copyOfRange(args, 1, args.length));
++                } else {
++                    target.execute(sender, sentCommandLabel, Arrays.copyOfRange(args, 1, args.length));
++                }
+             } // target.timings.stopTiming(); // Spigot // Paper
+         } catch (CommandException ex) {
+             server.getPluginManager().callEvent(new com.destroystokyo.paper.event.server.ServerExceptionEvent(new com.destroystokyo.paper.exception.ServerCommandException(ex, target, sender, args))); // Paper
+@@ -169,6 +173,13 @@ public class SimpleCommandMap implements CommandMap {
+         return true;
+     }
+ 
++    /**
++     * Parse legacy-style selectors - only for compatibility with command blocks from old versions using Bukkit commands
++     */
++    protected boolean parseSelectors(@NotNull Command command, @NotNull BlockCommandSender sender, @NotNull String label, @NotNull String[] args) {
++        return command.execute(sender, label, args);
++    }
++
+     @Override
+     public synchronized void clearCommands() {
+         for (Map.Entry<String, Command> entry : knownCommands.entrySet()) {
