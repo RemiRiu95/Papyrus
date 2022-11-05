@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Sat, 5 Nov 2022 14:30:36 +0100
+Subject: [PATCH] Les commandes ne sont plus sensibles a la casse (mais
+ toujours sensibles en preview)
+
+
+diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
+index 7c96f7fc5997761426a0c62cad0cab5cc668f282..3917a84779761b8da60e8106cb7bff462d860a39 100644
+--- a/src/main/java/net/minecraft/commands/Commands.java
++++ b/src/main/java/net/minecraft/commands/Commands.java
+@@ -252,6 +252,7 @@ public class Commands {
+ 
+         String[] args = command.split(" ");
+         if (args.length == 0) return 0; // Paper - empty commands shall not be dispatched
++        args[0] = args[0].toLowerCase(); // Papyrus - lower case match
+ 
+         String cmd = args[0];
+         if (cmd.startsWith("minecraft:")) cmd = cmd.substring("minecraft:".length());
