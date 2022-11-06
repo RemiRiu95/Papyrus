@@ -1,0 +1,110 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Sun, 6 Nov 2022 19:59:52 +0100
+Subject: [PATCH] =?UTF-8?q?Avenant=20au=20commit=20pr=C3=A9c=C3=A9dent=20p?=
+ =?UTF-8?q?our=20cacher=20des=20infos=20de=20l'IHM=20(interface,=20xp)=20s?=
+ =?UTF-8?q?i=20le=20joueur=20n'est=20pas=20authentifi=C3=A9?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index d957b31e17a72a36d5ee20e28dc62b28eff2d4e1..065c8b2cd5fceb7cef2efd4cfcd62ff904bb66a5 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -279,6 +279,10 @@ public class ServerPlayer extends Player {
+         this.containerSynchronizer = new ContainerSynchronizer() {
+             @Override
+             public void sendInitialData(AbstractContainerMenu handler, NonNullList<ItemStack> stacks, ItemStack cursorStack, int[] properties) {
++                if (ServerPlayer.this.unauthenticated) {
++                    return;
++                }
++
+                 ServerPlayer.this.connection.send(new ClientboundContainerSetContentPacket(handler.containerId, handler.incrementStateId(), stacks, cursorStack));
+ 
+                 for (int i = 0; i < properties.length; ++i) {
+@@ -289,26 +293,46 @@ public class ServerPlayer extends Player {
+ 
+             @Override
+             public void sendSlotChange(AbstractContainerMenu handler, int slot, ItemStack stack) {
++                if (ServerPlayer.this.unauthenticated) {
++                    return;
++                }
++
+                 ServerPlayer.this.connection.send(new ClientboundContainerSetSlotPacket(handler.containerId, handler.incrementStateId(), slot, stack));
+             }
+ 
+             @Override
+             public void sendCarriedChange(AbstractContainerMenu handler, ItemStack stack) {
++                if (ServerPlayer.this.unauthenticated) {
++                    return;
++                }
++
+                 ServerPlayer.this.connection.send(new ClientboundContainerSetSlotPacket(-1, handler.incrementStateId(), -1, stack));
+             }
+ 
+             @Override
+             public void sendDataChange(AbstractContainerMenu handler, int property, int value) {
++                if (ServerPlayer.this.unauthenticated) {
++                    return;
++                }
++
+                 this.broadcastDataValue(handler, property, value);
+             }
+ 
+             private void broadcastDataValue(AbstractContainerMenu handler, int property, int value) {
++                if (ServerPlayer.this.unauthenticated) {
++                    return;
++                }
++
+                 ServerPlayer.this.connection.send(new ClientboundContainerSetDataPacket(handler.containerId, property, value));
+             }
+         };
+         this.containerListener = new ContainerListener() {
+             @Override
+             public void slotChanged(AbstractContainerMenu handler, int slotId, ItemStack stack) {
++                if (ServerPlayer.this.unauthenticated) {
++                    return;
++                }
++
+                 Slot slot = handler.getSlot(slotId);
+ 
+                 if (!(slot instanceof ResultSlot)) {
+@@ -321,6 +345,10 @@ public class ServerPlayer extends Player {
+             // Paper start
+             @Override
+             public void slotChanged(AbstractContainerMenu handler, int slotId, ItemStack oldStack, ItemStack stack) {
++                if (ServerPlayer.this.unauthenticated) {
++                    return;
++                }
++
+                 Slot slot = handler.getSlot(slotId);
+                 if (!(slot instanceof ResultSlot)) {
+                     if (slot.container == ServerPlayer.this.getInventory()) {
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index 4bfdc289f3ae08055d63b22333ddddeb143612df..d1131375388608b1c3ec40892f0a54690fe547b3 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -1309,16 +1309,16 @@ public abstract class PlayerList {
+     }
+ 
+     public void sendAllPlayerInfo(ServerPlayer player) {
+-        // Papyrus  start
++        // Papyrus start
+         if (player.unauthenticated) {
+-            new net.minecraft.world.inventory.InventoryMenu(new net.minecraft.world.entity.player.Inventory(player), true, player).sendAllDataToRemote();
++            //new net.minecraft.world.inventory.InventoryMenu(new net.minecraft.world.entity.player.Inventory(player), true, player).sendAllDataToRemote();
+         } else { // Papyrus end
+             player.inventoryMenu.sendAllDataToRemote();
++            // entityplayer.resetSentInfo();
++            player.getBukkitEntity().updateScaledHealth(); // CraftBukkit - Update scaled health on respawn and worldchange
++            player.connection.send(new ClientboundSetCarriedItemPacket(player.getInventory().selected));
+         }
+ 
+-        // entityplayer.resetSentInfo();
+-        player.getBukkitEntity().updateScaledHealth(); // CraftBukkit - Update scaled health on respawn and worldchange
+-        player.connection.send(new ClientboundSetCarriedItemPacket(player.getInventory().selected));
+         // CraftBukkit start - from GameRules
+         updateReducedDebugInfo(player); // Papyrus
+         float immediateRespawn = player.level.getGameRules().getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN) ? 1.0F : 0.0F;
