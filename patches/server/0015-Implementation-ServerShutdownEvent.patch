@@ -5,13 +5,13 @@ Subject: [PATCH] Implementation ServerShutdownEvent
 
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 0149d84ddb09283ea807825afb217f4998c8b8ab..70353e5ad3be5cd0cf26f9ad8b272b2981c3fbcf 100644
+index a250d9455955cff05b2900e58e891e00aea510d6..0f801c0f4f8b847ae9ec928876143b0513169b60 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1019,6 +1019,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
-         this.safeShutdown(flag, false);
+@@ -1020,6 +1020,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         this.safeShutdown(waitForShutdown, false);
      }
-     public void safeShutdown(boolean flag, boolean isRestarting) {
+     public void safeShutdown(boolean waitForShutdown, boolean isRestarting) {
 +        org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.server.ServerShutdownEvent()); // Papyrus
 +
          this.isRestarting = isRestarting;

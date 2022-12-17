@@ -5,7 +5,7 @@ Subject: [PATCH] Implementation de Player::canAlwaysOpenCommandBlocks
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
-index 0a5f8d990cce5df339fd9b2b0fcb291a20ddad41..47451e9627738ca20013a7c717f5fa14d307176a 100644
+index 58b093bb1de78ee3b3b2ea364aa50474883f443a..d6170bba376a97000384c10d0f6fd74d481e5f11 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 @@ -400,7 +400,7 @@ public class ServerPlayerGameMode {
@@ -18,10 +18,10 @@ index 0a5f8d990cce5df339fd9b2b0fcb291a20ddad41..47451e9627738ca20013a7c717f5fa14
                  return false;
              } else if (this.player.blockActionRestricted(this.level, pos, this.gameModeForPlayer)) {
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 3be9352ae9b0b84acf07064b45562ceffd30391b..25851670fb3186a5319e409765e0a2986bc5f5dc 100644
+index b348d33726b2b14ea2d12ce3430df2c0b94295f4..d9fc656535f09724105bbaf57756a2fb7dc43b3f 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1022,6 +1022,10 @@ public abstract class PlayerList {
+@@ -1032,6 +1032,10 @@ public abstract class PlayerList {
          GameProfile gameprofile = player.getGameProfile();
          int i = this.server.getProfilePermissions(gameprofile);
  
@@ -74,10 +74,10 @@ index 2e7c03b00bc941b86df6a7f1b2b188c9f0aede22..ace12dac20035213cf0aded82e0ddaa3
              return InteractionResult.sidedSuccess(world.isClientSide);
          } else {
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index e8e703b4afb6fe5e0173c54ad13fbc98fffbdcdf..2b39740654add04315f2940f0fe1f7edd246d5b9 100644
+index 077bb44f57f861f75993bc4b1308e4fedb687c1e..3d3831afebd383af56b0ca4e691258ac2cbe17f5 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -177,6 +177,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -179,6 +179,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      private static final boolean DISABLE_CHANNEL_LIMIT = System.getProperty("paper.disableChannelLimit") != null; // Paper - add a flag to disable the channel limit
      private long lastSaveTime;
      // Paper end
@@ -85,7 +85,7 @@ index e8e703b4afb6fe5e0173c54ad13fbc98fffbdcdf..2b39740654add04315f2940f0fe1f7ed
  
      public CraftPlayer(CraftServer server, ServerPlayer entity) {
          super(server, entity);
-@@ -2893,6 +2894,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2913,6 +2914,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          }
      }
      // Paper end

@@ -6,10 +6,10 @@ Subject: [PATCH] Les commandes ne sont plus sensibles a la casse (mais
 
 
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 7c96f7fc5997761426a0c62cad0cab5cc668f282..3917a84779761b8da60e8106cb7bff462d860a39 100644
+index 330f6c79417378da855326b4da665f9d240e748d..cfabaf39a0a815f6d9815034be0c5abbaabd1054 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
-@@ -252,6 +252,7 @@ public class Commands {
+@@ -260,6 +260,7 @@ public class Commands {
  
          String[] args = command.split(" ");
          if (args.length == 0) return 0; // Paper - empty commands shall not be dispatched

@@ -5,10 +5,10 @@ Subject: [PATCH] PlayerCommand - On force le label en lowercase
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 917391cd6f5a6c75af053fd64b89e1a3160d7427..d5fba76b1df54ece4b45ab9739ab7f5e7c71cd67 100644
+index 3863ff39085ab0511ff8fc04dfae37a06601e844..2f596a6e7c1a6179828c82c238d819190e8b2f96 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -710,6 +710,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -712,6 +712,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
              this.getHandle().connection.disconnect(Component.translatable("multiplayer.disconnect.illegal_characters"), org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_CHARACTERS);
          } else {
              if (msg.startsWith("/")) {
@@ -20,4 +20,4 @@ index 917391cd6f5a6c75af053fd64b89e1a3160d7427..d5fba76b1df54ece4b45ab9739ab7f5e
 +
                  this.getHandle().connection.handleCommand(msg);
              } else {
-                 // TODO text filtering
+                 final PlayerChatMessage playerChatMessage = PlayerChatMessage.system(msg).withResult(new net.minecraft.network.chat.ChatDecorator.ModernResult(Component.literal(msg), true, false));

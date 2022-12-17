@@ -5,16 +5,16 @@ Subject: [PATCH] Les messages sont tous trusted
 
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index d1131375388608b1c3ec40892f0a54690fe547b3..4b86dd142a7e4702a24cb9d18e9dbe79c24a7dec 100644
+index 932b423bd3a0d75f576a9a88e73d8d66966d3c52..41626a77ce84cc40ffce1c1891378a05685cf626 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1504,7 +1504,8 @@ public abstract class PlayerList {
+@@ -1495,7 +1495,8 @@ public abstract class PlayerList {
      }
  
-     public boolean verifyChatTrusted(PlayerChatMessage message, ChatSender profile) { // Paper - private -> public
--        return !message.hasExpiredServer(Instant.now()) && message.verify(profile);
+     public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public
+-        return message.hasSignature() && !message.hasExpiredServer(Instant.now());
 +        return true;
-+        //return !message.hasExpiredServer(Instant.now()) && message.verify(profile);
++        //return message.hasSignature() && !message.hasExpiredServer(Instant.now());
      }
  
      // CraftBukkit start

@@ -10,10 +10,10 @@ Content-Transfer-Encoding: 8bit
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index d957b31e17a72a36d5ee20e28dc62b28eff2d4e1..065c8b2cd5fceb7cef2efd4cfcd62ff904bb66a5 100644
+index 91a2971ae2a2d2f5347dacb87788e9ef9cf61169..408af950ffc457cbe588bdfcfc9d8b087e9e504d 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -279,6 +279,10 @@ public class ServerPlayer extends Player {
+@@ -284,6 +284,10 @@ public class ServerPlayer extends Player {
          this.containerSynchronizer = new ContainerSynchronizer() {
              @Override
              public void sendInitialData(AbstractContainerMenu handler, NonNullList<ItemStack> stacks, ItemStack cursorStack, int[] properties) {
@@ -24,7 +24,7 @@ index d957b31e17a72a36d5ee20e28dc62b28eff2d4e1..065c8b2cd5fceb7cef2efd4cfcd62ff9
                  ServerPlayer.this.connection.send(new ClientboundContainerSetContentPacket(handler.containerId, handler.incrementStateId(), stacks, cursorStack));
  
                  for (int i = 0; i < properties.length; ++i) {
-@@ -289,26 +293,46 @@ public class ServerPlayer extends Player {
+@@ -301,26 +305,46 @@ public class ServerPlayer extends Player {
  
              @Override
              public void sendSlotChange(AbstractContainerMenu handler, int slot, ItemStack stack) {
@@ -71,7 +71,7 @@ index d957b31e17a72a36d5ee20e28dc62b28eff2d4e1..065c8b2cd5fceb7cef2efd4cfcd62ff9
                  Slot slot = handler.getSlot(slotId);
  
                  if (!(slot instanceof ResultSlot)) {
-@@ -321,6 +345,10 @@ public class ServerPlayer extends Player {
+@@ -333,6 +357,10 @@ public class ServerPlayer extends Player {
              // Paper start
              @Override
              public void slotChanged(AbstractContainerMenu handler, int slotId, ItemStack oldStack, ItemStack stack) {
@@ -83,10 +83,10 @@ index d957b31e17a72a36d5ee20e28dc62b28eff2d4e1..065c8b2cd5fceb7cef2efd4cfcd62ff9
                  if (!(slot instanceof ResultSlot)) {
                      if (slot.container == ServerPlayer.this.getInventory()) {
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 4bfdc289f3ae08055d63b22333ddddeb143612df..d1131375388608b1c3ec40892f0a54690fe547b3 100644
+index 096082b81ef0e357e8495928b268edb29f287c00..932b423bd3a0d75f576a9a88e73d8d66966d3c52 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1309,16 +1309,16 @@ public abstract class PlayerList {
+@@ -1319,16 +1319,16 @@ public abstract class PlayerList {
      }
  
      public void sendAllPlayerInfo(ServerPlayer player) {
