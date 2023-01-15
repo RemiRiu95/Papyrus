@@ -1,0 +1,58 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Sun, 15 Jan 2023 19:34:03 +0100
+Subject: [PATCH] =?UTF-8?q?Si=20send-namespaced=20false,=20on=20les=20envo?=
+ =?UTF-8?q?ie=20quand=20m=C3=AAme=20aux=20ops?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+
+diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
+index cfabaf39a0a815f6d9815034be0c5abbaabd1054..1059597a9f77af05efddc280a67da7d17a475053 100644
+--- a/src/main/java/net/minecraft/commands/Commands.java
++++ b/src/main/java/net/minecraft/commands/Commands.java
+@@ -404,13 +404,14 @@ public class Commands {
+ 
+         RootCommandNode<CommandSourceStack> vanilla = player.server.vanillaCommandDispatcher.getDispatcher().getRoot();
+         map.put(vanilla, vanillaRoot);
+-        this.fillUsableCommands(vanilla, vanillaRoot, player.createCommandSourceStack(), (Map) map);
++        boolean op = player.getServer().getPlayerList().isOp(player.getGameProfile());
++        this.fillUsableCommands(vanilla, vanillaRoot, player.createCommandSourceStack(), (Map) map, op);
+ 
+         // Now build the global commands in a second pass
+         RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode();
+ 
+         map.put(this.dispatcher.getRoot(), rootcommandnode);
+-        this.fillUsableCommands(this.dispatcher.getRoot(), rootcommandnode, player.createCommandSourceStack(), map);
++        this.fillUsableCommands(this.dispatcher.getRoot(), rootcommandnode, player.createCommandSourceStack(), map, op);
+ 
+         Collection<String> bukkit = new LinkedHashSet<>();
+         for (CommandNode node : rootcommandnode.getChildren()) {
+@@ -439,7 +440,7 @@ public class Commands {
+         player.connection.send(new ClientboundCommandsPacket(rootcommandnode));
+     }
+ 
+-    private void fillUsableCommands(CommandNode<CommandSourceStack> tree, CommandNode<SharedSuggestionProvider> result, CommandSourceStack source, Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> resultNodes) {
++    private void fillUsableCommands(CommandNode<CommandSourceStack> tree, CommandNode<SharedSuggestionProvider> result, CommandSourceStack source, Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> resultNodes, boolean op) {
+         Iterator iterator = tree.getChildren().iterator();
+ 
+         boolean registeredAskServerSuggestionsForTree = false; // Paper - tell clients to ask server for suggestions for EntityArguments
+@@ -450,7 +451,7 @@ public class Commands {
+                 commandnode2 = commandnode2.clientNode;
+             }
+             // Paper end
+-            if ( !org.spigotmc.SpigotConfig.sendNamespaced && commandnode2.getName().contains( ":" ) ) continue; // Spigot
++            if ( !org.spigotmc.SpigotConfig.sendNamespaced && commandnode2.getName().contains( ":" ) && !op ) continue; // Spigot
+ 
+             if (commandnode2.canUse(source)) {
+                 ArgumentBuilder argumentbuilder = commandnode2.createBuilder(); // CraftBukkit - decompile error
+@@ -487,7 +488,7 @@ public class Commands {
+                 resultNodes.put(commandnode2, commandnode3);
+                 result.addChild(commandnode3);
+                 if (!commandnode2.getChildren().isEmpty()) {
+-                    this.fillUsableCommands(commandnode2, commandnode3, source, resultNodes);
++                    this.fillUsableCommands(commandnode2, commandnode3, source, resultNodes, op);
+                 }
+             }
+         }
