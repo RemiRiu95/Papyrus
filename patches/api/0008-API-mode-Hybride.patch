@@ -5,10 +5,10 @@ Subject: [PATCH] API mode Hybride
 
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index ac9b690fcccb60b587e5345f12f1383afd0a73a1..97898543658a9abb68ab2a7399d9cf0098e5b95c 100644
+index f1af93319d6b29d7bc709e7e273e8abe26c7b4af..f7c48cbc9a5d0348866048b8532e484c44ab2496 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -2460,6 +2460,17 @@ public final class Bukkit {
+@@ -2457,6 +2457,17 @@ public final class Bukkit {
      }
      // Paper end
  
@@ -27,10 +27,10 @@ index ac9b690fcccb60b587e5345f12f1383afd0a73a1..97898543658a9abb68ab2a7399d9cf00
      public static Server.Spigot spigot() {
          return server.spigot();
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index 2204336d8800311b65e894739ab1b27273e7c6f2..ba83b4095c50902b5f29310846beecb3abaeeb6e 100644
+index 8621dba7f10ab822b5b99ce0d05da58823605cb6..d1bb8cecd0734e2554dc82615466c2b6b9beaac1 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -2139,4 +2139,13 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -2136,4 +2136,13 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
       */
      @NotNull org.bukkit.potion.PotionBrewer getPotionBrewer();
      // Paper end
@@ -45,10 +45,10 @@ index 2204336d8800311b65e894739ab1b27273e7c6f2..ba83b4095c50902b5f29310846beecb3
 +    // Papyrus end
  }
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index f398496590d8f3dd1c654a670252980a4c6cf737..dfdce4f90825b3b3da8d990143207a0e608e4bdd 100644
+index fe5a6928948bbc0ddae20997b98f7d5cfb3d7c04..e4924835975361650ac2c18d100e6aaff3b0b2c0 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -2650,6 +2650,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+@@ -2806,6 +2806,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
       * @param canAlwaysOpenCommandBlocks whether this player can always open command blocks
       */
      void setCanAlwaysOpenCommandBlocks(boolean canAlwaysOpenCommandBlocks);
@@ -66,7 +66,7 @@ index f398496590d8f3dd1c654a670252980a4c6cf737..dfdce4f90825b3b3da8d990143207a0e
  
      /**
 diff --git a/src/main/java/org/bukkit/event/entity/EntityPotionEffectEvent.java b/src/main/java/org/bukkit/event/entity/EntityPotionEffectEvent.java
-index 01c5e8b71338fbb4b1605e45bf2a2e705188f6b5..f7d578e75fc6617a283fd06040e4204562618510 100644
+index c9f395064656dd0126410eb3c6e197baa450c063..67acde745bfa85f47e68c27adcce0b5bd5147245 100644
 --- a/src/main/java/org/bukkit/event/entity/EntityPotionEffectEvent.java
 +++ b/src/main/java/org/bukkit/event/entity/EntityPotionEffectEvent.java
 @@ -213,6 +213,10 @@ public class EntityPotionEffectEvent extends EntityEvent implements Cancellable

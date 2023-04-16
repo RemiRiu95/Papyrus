@@ -5,10 +5,10 @@ Subject: [PATCH] Implementation de CommandBlockEditEvent
 
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 57a62a5d6e05b6e05214b5aef96c5f2411e9f424..b10c0ac8d416a044e633b4aa2d685b0ff0e79bd3 100644
+index 9c5754ac3b00d3f0cb80ec83a2beefadee6d0a14..87fdab763266b8a02a20edc1cc06b1a8f7dbd8b6 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -182,6 +182,7 @@ import net.minecraft.world.phys.Vec3;
+@@ -184,6 +184,7 @@ import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -16,7 +16,7 @@ index 57a62a5d6e05b6e05214b5aef96c5f2411e9f424..b10c0ac8d416a044e633b4aa2d685b0f
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -938,67 +939,119 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -945,67 +946,119 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      @Override
      public void handleSetCommandBlock(ServerboundSetCommandBlockPacket packet) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel());

@@ -5,25 +5,30 @@ Subject: [PATCH] Implement canSeePlayerEntities API
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 99bf1485ddecb5fc88850242e9c32850781c4b36..077bb44f57f861f75993bc4b1308e4fedb687c1e 100644
+index c8d8ab8e5d8d0a986ff023ce1e195667472d7798..89f18b75ffde4c7179d7e7bc0b7dc470c496aae7 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -165,6 +165,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -167,6 +167,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      private final ConversationTracker conversationTracker = new ConversationTracker();
      private final Set<String> channels = new HashSet<String>();
-     private final Map<UUID, Set<WeakReference<Plugin>>> hiddenEntities = new HashMap<>();
+     private final Map<UUID, Set<WeakReference<Plugin>>> invertedVisibilityEntities = new HashMap<>();
++    private final Map<UUID, Set<WeakReference<Plugin>>> hiddenEntities = new HashMap<>();
 +    private final Set<WeakReference<Plugin>> hideAllPlugins = new HashSet<>();
      private static final WeakHashMap<Plugin, WeakReference<Plugin>> pluginWeakReferences = new WeakHashMap<>();
      private int hash = 0;
      private double health = 20;
-@@ -1846,9 +1847,68 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2019,9 +2021,72 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+             entity = getServer().getEntity(uuid); // Also includes players, but check players first for efficiency
+         }
  
-     @Override
-     public boolean canSee(org.bukkit.entity.Entity entity) {
-+        if(entity instanceof Player && !canSeePlayerEntities())
++        if (entity instanceof Player && !canSeePlayerEntities()) {
 +            return false;
++        }
++        if (this.hiddenEntities.containsKey(entity.getUniqueId())) {
++            return false;
++        }
 +
-         return !this.hiddenEntities.containsKey(entity.getUniqueId());
+         return (entity != null) ? this.canSee(entity) : false; // If we can't find it, we can't see it
      }
  
 +    @Override

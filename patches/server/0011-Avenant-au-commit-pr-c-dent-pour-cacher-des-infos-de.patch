@@ -10,10 +10,10 @@ Content-Transfer-Encoding: 8bit
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 91a2971ae2a2d2f5347dacb87788e9ef9cf61169..408af950ffc457cbe588bdfcfc9d8b087e9e504d 100644
+index 7d6984643ce4c8a5e9a59c9bb13ad39c3ee1bd9c..d5814edc4682ce9c496a458f0c59839a9ea7200f 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -284,6 +284,10 @@ public class ServerPlayer extends Player {
+@@ -289,6 +289,10 @@ public class ServerPlayer extends Player {
          this.containerSynchronizer = new ContainerSynchronizer() {
              @Override
              public void sendInitialData(AbstractContainerMenu handler, NonNullList<ItemStack> stacks, ItemStack cursorStack, int[] properties) {
@@ -24,7 +24,7 @@ index 91a2971ae2a2d2f5347dacb87788e9ef9cf61169..408af950ffc457cbe588bdfcfc9d8b08
                  ServerPlayer.this.connection.send(new ClientboundContainerSetContentPacket(handler.containerId, handler.incrementStateId(), stacks, cursorStack));
  
                  for (int i = 0; i < properties.length; ++i) {
-@@ -301,26 +305,46 @@ public class ServerPlayer extends Player {
+@@ -306,26 +310,46 @@ public class ServerPlayer extends Player {
  
              @Override
              public void sendSlotChange(AbstractContainerMenu handler, int slot, ItemStack stack) {
@@ -71,7 +71,7 @@ index 91a2971ae2a2d2f5347dacb87788e9ef9cf61169..408af950ffc457cbe588bdfcfc9d8b08
                  Slot slot = handler.getSlot(slotId);
  
                  if (!(slot instanceof ResultSlot)) {
-@@ -333,6 +357,10 @@ public class ServerPlayer extends Player {
+@@ -338,6 +362,10 @@ public class ServerPlayer extends Player {
              // Paper start
              @Override
              public void slotChanged(AbstractContainerMenu handler, int slotId, ItemStack oldStack, ItemStack stack) {
@@ -83,10 +83,10 @@ index 91a2971ae2a2d2f5347dacb87788e9ef9cf61169..408af950ffc457cbe588bdfcfc9d8b08
                  if (!(slot instanceof ResultSlot)) {
                      if (slot.container == ServerPlayer.this.getInventory()) {
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 096082b81ef0e357e8495928b268edb29f287c00..932b423bd3a0d75f576a9a88e73d8d66966d3c52 100644
+index 59fbbe32f0148e602a4fd4e14719175f2dac4f7e..f058c19e2432824c39333955b795b23adedb07e9 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1319,16 +1319,16 @@ public abstract class PlayerList {
+@@ -1263,17 +1263,17 @@ public abstract class PlayerList {
      }
  
      public void sendAllPlayerInfo(ServerPlayer player) {
@@ -99,11 +99,13 @@ index 096082b81ef0e357e8495928b268edb29f287c00..932b423bd3a0d75f576a9a88e73d8d66
              player.inventoryMenu.sendAllDataToRemote();
 +            // entityplayer.resetSentInfo();
 +            player.getBukkitEntity().updateScaledHealth(); // CraftBukkit - Update scaled health on respawn and worldchange
++            player.getEntityData().refresh(player); // CraftBukkkit - SPIGOT-7218: sync metadata
 +            player.connection.send(new ClientboundSetCarriedItemPacket(player.getInventory().selected));
          }
  
 -        // entityplayer.resetSentInfo();
 -        player.getBukkitEntity().updateScaledHealth(); // CraftBukkit - Update scaled health on respawn and worldchange
+-        player.getEntityData().refresh(player); // CraftBukkkit - SPIGOT-7218: sync metadata
 -        player.connection.send(new ClientboundSetCarriedItemPacket(player.getInventory().selected));
          // CraftBukkit start - from GameRules
          updateReducedDebugInfo(player); // Papyrus

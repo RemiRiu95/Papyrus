@@ -5,10 +5,10 @@ Subject: [PATCH] Les messages sont tous trusted
 
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 932b423bd3a0d75f576a9a88e73d8d66966d3c52..41626a77ce84cc40ffce1c1891378a05685cf626 100644
+index f058c19e2432824c39333955b795b23adedb07e9..14cd38ddd09c0d6b3e16eea63a346f5ca3984a3c 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1495,7 +1495,8 @@ public abstract class PlayerList {
+@@ -1449,7 +1449,8 @@ public abstract class PlayerList {
      }
  
      public boolean verifyChatTrusted(PlayerChatMessage message) { // Paper - private -> public

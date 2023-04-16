@@ -9,10 +9,10 @@ Content-Transfer-Encoding: 8bit
 
 
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index cfabaf39a0a815f6d9815034be0c5abbaabd1054..1059597a9f77af05efddc280a67da7d17a475053 100644
+index 2f9eec557f8d37e993cef9ef3b9af02b816e4c96..bbbe3b19280aa93c829346ddf48c5e28239bfe40 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
-@@ -404,13 +404,14 @@ public class Commands {
+@@ -433,13 +433,14 @@ public class Commands {
  
          RootCommandNode<CommandSourceStack> vanilla = player.server.vanillaCommandDispatcher.getDispatcher().getRoot();
          map.put(vanilla, vanillaRoot);
@@ -29,7 +29,7 @@ index cfabaf39a0a815f6d9815034be0c5abbaabd1054..1059597a9f77af05efddc280a67da7d1
  
          Collection<String> bukkit = new LinkedHashSet<>();
          for (CommandNode node : rootcommandnode.getChildren()) {
-@@ -439,7 +440,7 @@ public class Commands {
+@@ -468,7 +469,7 @@ public class Commands {
          player.connection.send(new ClientboundCommandsPacket(rootcommandnode));
      }
  
@@ -38,7 +38,7 @@ index cfabaf39a0a815f6d9815034be0c5abbaabd1054..1059597a9f77af05efddc280a67da7d1
          Iterator iterator = tree.getChildren().iterator();
  
          boolean registeredAskServerSuggestionsForTree = false; // Paper - tell clients to ask server for suggestions for EntityArguments
-@@ -450,7 +451,7 @@ public class Commands {
+@@ -479,7 +480,7 @@ public class Commands {
                  commandnode2 = commandnode2.clientNode;
              }
              // Paper end
@@ -47,7 +47,7 @@ index cfabaf39a0a815f6d9815034be0c5abbaabd1054..1059597a9f77af05efddc280a67da7d1
  
              if (commandnode2.canUse(source)) {
                  ArgumentBuilder argumentbuilder = commandnode2.createBuilder(); // CraftBukkit - decompile error
-@@ -487,7 +488,7 @@ public class Commands {
+@@ -516,7 +517,7 @@ public class Commands {
                  resultNodes.put(commandnode2, commandnode3);
                  result.addChild(commandnode3);
                  if (!commandnode2.getChildren().isEmpty()) {

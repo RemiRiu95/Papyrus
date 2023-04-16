@@ -5,10 +5,10 @@ Subject: [PATCH] PlayerCommand - On force le label en lowercase
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 3863ff39085ab0511ff8fc04dfae37a06601e844..2f596a6e7c1a6179828c82c238d819190e8b2f96 100644
+index 0483cee8d4856ffecc4a08366b2957678e05e069..c96f695e6bb63eb9218a06161ae8e42d1c1d11c2 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -712,6 +712,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -718,6 +718,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
              this.getHandle().connection.disconnect(Component.translatable("multiplayer.disconnect.illegal_characters"), org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_CHARACTERS);
          } else {
              if (msg.startsWith("/")) {

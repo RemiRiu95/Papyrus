@@ -5,10 +5,10 @@ Subject: [PATCH] Ajout de Player::canAlwaysOpenCommandBlocks
 
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index c9b9453638951bb69bc0fa2becd1dd36e9a315b5..d81323e1bfb02142c0fb62cfb701d95e9483dea0 100644
+index fdfa1caaf61b7c857e82a7f7584056299e19dbd8..fe5a6928948bbc0ddae20997b98f7d5cfb3d7c04 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -2636,6 +2636,22 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+@@ -2792,6 +2792,22 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
       */
      void sendOpLevel(byte level);
  
