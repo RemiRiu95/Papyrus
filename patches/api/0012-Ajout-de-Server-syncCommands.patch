@@ -1,0 +1,18 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Thu, 8 Jun 2023 01:58:43 +0200
+Subject: [PATCH] Ajout de Server::syncCommands
+
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index d1bb8cecd0734e2554dc82615466c2b6b9beaac1..a24f8363125e7177909aac9e02bdbbd7995d5680 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -2144,5 +2144,7 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+      * @return true if the server is in hybrid mode, false otherwise
+      */
+     boolean getHybridMode();
++
++    void syncCommands();
+     // Papyrus end
+ }
