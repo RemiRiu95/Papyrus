@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Fri, 7 Jul 2023 01:19:18 +0200
+Subject: [PATCH] Ajout sendPlayerListName
+
+
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index e4924835975361650ac2c18d100e6aaff3b0b2c0..501af4f0abc91dd3db77851e1a5bba9fe16c47a8 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -149,6 +149,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+     @Deprecated // Paper
+     public void setPlayerListName(@Nullable String name);
+ 
++    public void sendPlayerListName(@NotNull Player player, @Nullable String name);
++
+     /**
+      * Gets the currently displayed player list header for this player.
+      *

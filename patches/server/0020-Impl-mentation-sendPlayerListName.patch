@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Fri, 7 Jul 2023 01:19:38 +0200
+Subject: [PATCH] =?UTF-8?q?Impl=C3=A9mentation=20sendPlayerListName?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index c96f695e6bb63eb9218a06161ae8e42d1c1d11c2..f146b0cd60439a093284f2bedf4cae3d461f9fca 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -535,6 +535,17 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         return this.getHandle().listName == null ? getName() : CraftChatMessage.fromComponent(this.getHandle().listName);
+     }
+ 
++    @Override
++    public void sendPlayerListName(Player player, String name) {
++        if (name == null) {
++            name = getName();
++        }
++
++        ServerPlayer serverPlayerThis = this.getHandle();
++        CraftPlayer target = (CraftPlayer) player;
++        serverPlayerThis.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, target.getHandle()));
++    }
++
+     @Override
+     public void setPlayerListName(String name) {
+         if (name == null) {
