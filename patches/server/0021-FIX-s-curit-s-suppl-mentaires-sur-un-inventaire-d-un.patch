@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Remi <remi.riu95@gmail.com>
+Date: Tue, 29 Aug 2023 01:40:58 +0200
+Subject: [PATCH] =?UTF-8?q?FIX=20s=C3=A9curit=C3=A9s=20suppl=C3=A9mentaire?=
+ =?UTF-8?q?s=20sur=20un=20inventaire=20d'un=20non-logg=C3=A9=20(#Seremptos?=
+ =?UTF-8?q?)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 23aa4e341817704da5f5714ba7f9e9ebfd91979a..88f6e757a5efdf4c49b703a9e8f63f2b4ab4d4e8 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -3042,6 +3042,8 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+     public void handleContainerClick(ServerboundContainerClickPacket packet) {
+         PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel());
+         if (this.player.isImmobile()) return; // CraftBukkit
++        if (player.unauthenticated) return; // Papyrus - Hybrid mode
++
+         this.player.resetLastActionTime();
+         if (this.player.containerMenu.containerId == packet.getContainerId() && this.player.containerMenu.stillValid(this.player)) { // CraftBukkit
+             boolean cancelled = this.player.isSpectator(); // CraftBukkit - see below if
+@@ -3408,6 +3410,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+     @Override
+     public void handleSetCreativeModeSlot(ServerboundSetCreativeModeSlotPacket packet) {
+         PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel());
++        // Papyrus - Hybrid mode
++        if (player.unauthenticated) {
++            this.player.connection.send(new ClientboundContainerSetSlotPacket(this.player.inventoryMenu.containerId, -1, packet.getSlotNum(), ItemStack.fromBukkitCopy(new org.bukkit.inventory.ItemStack(org.bukkit.Material.AIR)))); // Retirer l'item de l'inventaire (purement visuel)
++            return;
++        }
++        // Papyrus end
++
+         if (this.player.gameMode.isCreative()) {
+             boolean flag = packet.getSlotNum() < 0;
+             ItemStack itemstack = packet.getItem();
